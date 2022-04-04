@@ -3,7 +3,7 @@ title Submitting Notes page
 Browser->Server: HTTP POST /new_note
 
 note over Server:
-server executes form action
+server executes form action and asks the browser to make GET requests
 end note
 
 Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
