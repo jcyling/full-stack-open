@@ -1,0 +1,8 @@
+title Submitting Notes in Single Page App
+
+note over Browser:
+browser creates new note and renders notes list
+end note
+
+Browser->Server: HTTP POST /new_note_spa
+

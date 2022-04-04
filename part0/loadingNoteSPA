@@ -1,0 +1,19 @@
+title Loading Notes Single Page App
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+Server->Browser: HTML code
+Browser->Server: HTTP GET /exampleapp/main.css
+Server-> Browser: main.css
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+Server-> Browser: spa.js
+
+note over Browser: 
+browser starts executing js-code
+end note
+
+Browser->Server: https://studies.cs.helsinki.fi/exampleapp/data.json
+Server-> Browser: data.json
+
+note over Browser: 
+browser renders notes
+end note
