@@ -1,12 +1,34 @@
-import { useState } from 'react'
-
+import { useState, useEffect } from 'react'
 import React from 'react'
+import book from './services/book';
 
-const Entry = ({ person }) => {
+const Entry = ({ person, persons, setPersons }) => {
+
+  const deleteEntry = (id) => {
+    book.deleteEntry(id)
+      .catch(error => {
+        alert(error);
+      })
+
+    const updatedBook = persons.filter(item => item.id !== id)
+    setPersons(updatedBook);
+  }
+
+  const handleDelete = (id) => {
+    if (window.confirm("Delete?")) {
+      console.log("Yes")
+      deleteEntry(id)
+    }
+    else {
+      console.log("No")
+    }
+  }
+
   return (
     <div>
       <span>{person.name}</span>
       <span> {person.number}</span>
+      <button onClick={() => handleDelete(person.id)}>Delete</button>
     </div>
   )
 }
@@ -36,16 +58,21 @@ const PersonForm = ({ addEntry, newName, newNumber, handleNameInput, handleNumbe
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '18938193', id: 1 },
-    { name: 'John Smith', number: '19242302', id: 2 },
-    { name: 'Racocoonie', number: '19242302', id: 3 },
-
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
   const [searchStatus, setSearchStat] = useState(false)
+
+  const hook = () => {
+    book.getAll()
+      .then(response => {
+        setPersons(response);
+      })
+  }
+
+  // Execute fetch at the first rendering
+  useEffect(hook, []);
 
   const handleSearchInput = (event) => {
     if (event.target.value.length > 0) {
@@ -82,20 +109,54 @@ const App = () => {
 
   const addEntry = (event) => {
     event.preventDefault();
+
     // If newName is found in object, give alert
     if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already in phonebook!`)
-      return;
+      const samePerson = persons.filter(person => person.name === newName)[0];
+
+      const changedPerson = {
+        ...samePerson,
+        number: newNumber
+      }
+
+      const replaceMessage = `${newName} is already in phonebook, replace their number?`
+      if (window.confirm(replaceMessage)) {
+        book.update(samePerson.id, changedPerson)
+          .then(returnedEntry =>
+            setPersons(persons.map(
+              person => person.id !== samePerson.id ? person : returnedEntry
+            )))
+          .catch(error =>
+            alert(error)
+          )
+      }
+      else { 
+        return; 
+      }
+    }
+    // If no existing entry found
+    else {
+      const lastPerson = persons.slice(-1)
+
+      const personObject = {
+        name: newName,
+        number: newNumber,
+        id: lastPerson.id + 1
+      }
+
+      setNewName('');
+      setNewNumber('');
+
+      book
+        .create(personObject)
+        .then(response =>
+          setPersons(persons.concat(response))
+        )
+        .catch(error => {
+          alert(error);
+        })
     }
 
-    const personObject = {
-      name: newName,
-      number: newNumber,
-      id: persons.length + 1
-    }
-    setPersons(persons.concat(personObject));
-    setNewName('');
-    setNewNumber('');
   }
 
   return (
@@ -103,10 +164,10 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter newSearch={newSearch} handleSearchInput={handleSearchInput} />
       <h2>Add New Number</h2>
-      <PersonForm addEntry={addEntry} ewName={newName} newNumber={newNumber} handleNameInput={handleNameInput} handleNumberInput={handleNumberInput} />
+      <PersonForm addEntry={addEntry} newName={newName} newNumber={newNumber} handleNameInput={handleNameInput} handleNumberInput={handleNumberInput} />
       <h2>Numbers</h2>
       {entryDisplay.map(person =>
-        <Entry person={person} key={person.id} />
+        <Entry person={person} persons={persons} setPersons={setPersons} key={person.id} />
       )}
     </div>
   )
