@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import React from 'react'
-import book from './services/book';
+import book from './services/book'
+import Notification from './components/Notification'
 
 const Entry = ({ person, persons, setPersons }) => {
 
@@ -63,6 +64,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
   const [searchStatus, setSearchStat] = useState(false)
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState(null)
 
   const hook = () => {
     book.getAll()
@@ -106,7 +109,6 @@ const App = () => {
   const entryDisplay = searchStatus ?
     persons.filter(person => searchEntries(person)) : persons;
 
-
   const addEntry = (event) => {
     event.preventDefault();
 
@@ -122,16 +124,28 @@ const App = () => {
       const replaceMessage = `${newName} is already in phonebook, replace their number?`
       if (window.confirm(replaceMessage)) {
         book.update(samePerson.id, changedPerson)
-          .then(returnedEntry =>
+          .then(returnedEntry => {
             setPersons(persons.map(
               person => person.id !== samePerson.id ? person : returnedEntry
-            )))
-          .catch(error =>
-            alert(error)
+            ))
+            setMessage(`Added ${returnedEntry.name}.`)
+            setMessageType(true)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+          }
           )
+          .catch(error => {
+            setMessage(`${samePerson.name} has already been removed from the server.`)
+            setMessageType(false)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+          }
+          )          
       }
-      else { 
-        return; 
+      else {
+        return;
       }
     }
     // If no existing entry found
@@ -149,19 +163,25 @@ const App = () => {
 
       book
         .create(personObject)
-        .then(response =>
+        .then(response => {
           setPersons(persons.concat(response))
-        )
+          setMessage(`Added ${response.name}.`)
+          setMessageType(true)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+
+        })
         .catch(error => {
           alert(error);
         })
     }
-
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} messageType={messageType} />
       <Filter newSearch={newSearch} handleSearchInput={handleSearchInput} />
       <h2>Add New Number</h2>
       <PersonForm addEntry={addEntry} newName={newName} newNumber={newNumber} handleNameInput={handleNameInput} handleNumberInput={handleNumberInput} />
