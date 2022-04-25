@@ -28,7 +28,7 @@ beforeEach(async () => {
   await Promise.all(promiseArray)
 })
 
-describe(('api tests'), () => {
+describe(('getting entries'), () => {
   test('get list of blogs', async () => {
     await api
       .get('/api/blogs')
@@ -41,7 +41,9 @@ describe(('api tests'), () => {
     const content = response.body.map(item => item)
     expect(content[0].id).toBeDefined()
   })
+})
 
+describe(('adding new entries'), () => {
   test('post a new entry', async () => {
     const newEntry = {
       title: 'Books',
@@ -56,7 +58,7 @@ describe(('api tests'), () => {
       .expect(201)
 
     const response = await api.get('/api/blogs')
-    const content = response.body.map(item => item.content)
+    const content = response.body.map(item => item)
     expect(content).toHaveLength(3)
   })
 
@@ -75,12 +77,66 @@ describe(('api tests'), () => {
     const response = await api.get('/api/blogs')
     const content = response.body.map(item => item)
     const lastEntry = content[2]
-    console.log(lastEntry)
 
     expect(lastEntry.likes).toEqual(0)
   })
 
   test('rejects missing title or url', async () => {
+    const newEntry = {
+      author: 'A person at their best',
+      likes: 2
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newEntry)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    const content = response.body.map(item => item)
+    expect(content.length).toEqual(2)
+  })
+})
+
+describe(('deleting entries'), () => {
+  test('delete a single entry', async () => {
+    const response = await api.get('/api/blogs')
+    const content = response.body.map(item => item)
+    const firstEntry = content[0]
+    const firstEntryId = firstEntry.id
+
+    await api
+      .delete(`/api/blogs/${firstEntryId}`)
+      .expect(204)
+
+    const subsequentResponse = await api.get('/api/blogs')
+    const subsequentContent = subsequentResponse.body.map(item => item)
+    expect(subsequentContent).not.toContain(firstEntry.content)
+  })
+})
+
+describe(('updating entries'), () => {
+  test('update a single entry', async () => {
+    const response = await api.get('/api/blogs')
+    const content = response.body.map(item => item)
+    const entryToUpdateId = content[0].id
+
+    const updatedEntry = {
+      likes: 8,
+      id: entryToUpdateId
+    }
+
+    await api
+      .put(`/api/blogs/${entryToUpdateId}`)
+      .send(updatedEntry)
+      .expect(200)
+
+    const blogsInDb = await Blog.find({})
+    const blogsObject = blogsInDb.map(item => item)
+
+    const foundBlog = blogsObject.find(blog => blog.id === entryToUpdateId)
+    expect(foundBlog.likes).toBe(8)
+
   })
 })
 

@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const blogRouter = require('./controllers/blogsRouter')
+const middleware = require('./utils/middleware')
 const { MONGODB_URI } = require('./utils/config')
 
 const app = express()
@@ -19,5 +20,6 @@ app.use(cors())
 app.use(express.json())
 
 app.use('/api/blogs', blogRouter)
+app.use(middleware.errorHandler)
 
 module.exports = app

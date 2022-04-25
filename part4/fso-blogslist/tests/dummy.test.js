@@ -82,8 +82,9 @@ describe('total likes', () => {
 })
 
 describe('most likes', () => {
-  test('most likes in a list of blogs', () => {
+  test('most likes by author in a list of blogs', () => {
     const result = listHelper.favouriteBlog(blogs)
+
     expect(result).toEqual(
       {
         title: 'Canonical string reduction',
