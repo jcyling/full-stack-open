@@ -56,7 +56,7 @@ describe(('adding new entries'), () => {
 
     await api
       .post('/api/blogs')
-      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYyNzI3ZjE1NTljYzZlZmJmZDZhNDViYyIsImlhdCI6MTY1MTY3MDg1Mn0.D5bHjL-klLiaEnGfHVGozXbggaAeXQkLZO1xEkAV4Lw')
+      .set('Authorization', process.env.BEARER)
       .send(newEntry)
       .expect(201)
 
@@ -74,7 +74,7 @@ describe(('adding new entries'), () => {
 
     await api
       .post('/api/blogs')
-      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYyNzI3ZjE1NTljYzZlZmJmZDZhNDViYyIsImlhdCI6MTY1MTY3MDg1Mn0.D5bHjL-klLiaEnGfHVGozXbggaAeXQkLZO1xEkAV4Lw')
+      .set('Authorization', process.env.BEARER)
       .send(newEntry)
       .expect(201)
 
@@ -93,7 +93,7 @@ describe(('adding new entries'), () => {
 
     await api
       .post('/api/blogs')
-      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYyNzI3ZjE1NTljYzZlZmJmZDZhNDViYyIsImlhdCI6MTY1MTY3MDg1Mn0.D5bHjL-klLiaEnGfHVGozXbggaAeXQkLZO1xEkAV4Lw')
+      .set('Authorization', process.env.BEARER)
       .send(newEntry)
       .expect(400)
 
