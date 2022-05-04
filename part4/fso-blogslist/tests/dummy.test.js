@@ -80,3 +80,17 @@ describe('total likes', () => {
     expect(result).toBe(36)
   })
 })
+
+describe('most likes', () => {
+  test('most likes by author in a list of blogs', () => {
+    const result = listHelper.favouriteBlog(blogs)
+
+    expect(result).toEqual(
+      {
+        title: 'Canonical string reduction',
+        author: 'Edsger W. Dijkstra',
+        likes: 12,
+      }
+    )
+  })
+})

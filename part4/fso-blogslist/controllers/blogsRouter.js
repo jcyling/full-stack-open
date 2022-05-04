@@ -1,43 +1,33 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
-const middleware = require('../utils/middleware')
 
+// Use the router to get to the route
 blogRouter.get('/', async (request, response, next) => {
   // When the promise is returned, find with the schema
   try {
-    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
+    const blogs = await Blog.find({})
     response.json(blogs)
   } catch (exception) {
     next(exception)
   }
 })
 
-blogRouter.post('/', middleware.userExtractor, async (request, response, next) => {
+blogRouter.post('/', async (request, response, next) => {
+
   // Access request body
   const body = new Blog(request.body)
-
-  if (!request.user) {
-    return response.status(401).json({
-      error: 'user token missing or invalid'
-    })
-  }
-
-  const user = request.user
 
   // Assign request body to model
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
-    likes: body.likes,
-    user: user._id
+    likes: body.likes
   })
 
   try {
     // Make post request
     const savedBlog = await blog.save()
-    user.blogs = user.blogs.concat(savedBlog._id)
-    await user.save()
     response.status(201).json(savedBlog)
   } catch (exception) {
     next(exception)
@@ -61,24 +51,7 @@ blogRouter.put('/:id', async(request, response, next) => {
   }
 })
 
-blogRouter.delete('/:id', middleware.userExtractor, async (request, response, next) => {
-
-  const blogToDelete = await Blog.findById(request.params.id)
-
-  if (!request.user) {
-    return response.status(401).json({
-      error: 'user token missing or invalid'
-    })
-  }
-
-  const user = request.user
-
-  if (blogToDelete.user.toString() !== user._id.toString()) {
-    return response.status(401).json({
-      error: 'must be creator of entry to delete entry'
-    })
-  }
-
+blogRouter.delete('/:id', async (request, response, next) => {
   try {
     await Blog.findByIdAndRemove(request.params.id)
     response.status(204).end()
