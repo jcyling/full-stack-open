@@ -15,11 +15,12 @@ const Blog = ({ blog, updateLikes, removeBlog, user }) => {
   }
 
   const checkUser = (user, blog) => {
-    console.log(user)
-    console.log(blog.user)
-    if (user.name === blog.user.name) {
-      return <button onClick={() => confirmDelete(blog)}>remove</button>
+    if (user) {
+      if (user.name === blog.user.name) {
+        return <button onClick={() => confirmDelete(blog)}>remove</button>
+      }
     }
+    else return null
   }
 
   return (
@@ -31,9 +32,9 @@ const Blog = ({ blog, updateLikes, removeBlog, user }) => {
             <button onClick={toggleDetail}>hide</button>
           </div>
           <div>Author: {blog.author}</div>
-          <div>Url: {blog.url}</div>
+          <div className="blog-url">Url: {blog.url}</div>
 
-          <div>
+          <div className="blog-likes">
             Likes: {blog.likes}
             <button onClick={() => updateLikes(blog.id)}>like</button>
           </div>
