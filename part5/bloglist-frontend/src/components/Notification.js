@@ -21,12 +21,12 @@ const Notification = ({ message, messageType }) => {
   }
   else if (messageType) {
     return (
-      <div style={successMessage}>{message}</div>
+      <div className="message" style={successMessage}>{message}</div>
     )
   }
   else {
     return (
-      <div style={failMessage}>{message}</div>
+      <div className="message" style={failMessage}>{message}</div>
     )
   }
 }
