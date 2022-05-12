@@ -136,7 +136,7 @@ const App = () => {
           }
           )
           .catch(error => {
-            setMessage(`${samePerson.name} has already been removed from the server.`)
+            setMessage(error.response.data)
             setMessageType(false)
             setTimeout(() => {
               setMessage(null)
@@ -173,7 +173,8 @@ const App = () => {
 
         })
         .catch(error => {
-          alert(error);
+          console.log(error.response.data)
+          setMessage(error.response.data);
         })
     }
   }
