@@ -1,10 +1,8 @@
-/* eslint-disable react/prop-types */
 interface coursePart {
     name: string;
     exerciseCount: number  
 }
 
-// const Part: React.FC<{ part: coursePart }> = ({ part }) => {
 const Part = (props: coursePart ) => {
   return (
     <div>
