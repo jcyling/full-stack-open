@@ -1,27 +1,29 @@
 /* eslint-disable react/prop-types */
-interface courseParts {
-  name: string;
-  exerciseCount: number
+interface coursePart {
+    name: string;
+    exerciseCount: number  
 }
 
-const Part: React.FC<{ part: courseParts }> = ({ part }) => {
+// const Part: React.FC<{ part: coursePart }> = ({ part }) => {
+const Part = (props: coursePart ) => {
   return (
     <div>
-      <p>{part.name}</p>
-      <p>{part.exerciseCount}</p>
-
+      <p>{props.name}</p>
+      <p>{props.exerciseCount}</p>
     </div>
-
   )
 }
 
-const Content: React.FC<{ courseParts: courseParts[] }> = ({ courseParts })  => {
+interface coursePartList {
+  courseParts: coursePart[]
+}
+
+const Content = ({ courseParts }: coursePartList ) => {
   return (
     <div>
       <p>
-        {/* {console.log(courseParts)} */}
         {courseParts.map(course => {
-          return <Part key={course.name} part={course}/>
+          return <Part key={course.name} {...course} />
         })}
       </p>
     </div>
